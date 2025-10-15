@@ -1,0 +1,1 @@
+export default function P(){return <div className='section container-tight'><h1 className='text-3xl font-bold'>Privacy</h1><p className='mt-4 text-slate-300'>We do not sell your data. Contact details are used only to respond to your inquiry.</p></div>}
