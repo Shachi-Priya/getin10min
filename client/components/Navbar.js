@@ -7,13 +7,17 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const nav = (
     <ul className="flex flex-col md:flex-row gap-6 items-start md:items-center">
-      {['Services','Portfolio','Pricing','Contact'].map((n) => (
+      {['Home','Services','Portfolio','Pricing','Contact'].map((n) => (
         <li key={n}>
-          <Link href={`/${n.toLowerCase()}`} className="hover:text-cyan-300">{n}</Link>
+          <Link href={n === 'Home' ? '/' : `/${n.toLowerCase()}`} className="hover:text-cyan-300">
+            {n}
+          </Link>
         </li>
       ))}
       <li>
-        <Link href="/contact" className="btn btn-primary">Get quotation</Link>
+        <Link href="/contact" className="btn btn-primary">
+          Book a free call
+        </Link>
       </li>
     </ul>
   );
@@ -25,13 +29,20 @@ export default function Navbar() {
           <Image alt="getin10min" src="/logo.svg" width={140} height={32} priority />
           <span className="sr-only">getin10min</span>
         </Link>
+
         <nav className="hidden md:block">
           {nav}
         </nav>
-        <button className="md:hidden btn btn-ghost" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+
+        <button
+          className="md:hidden btn btn-ghost"
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
           ☰
         </button>
       </div>
+
       <AnimatePresence>
         {open && (
           <motion.div
