@@ -71,9 +71,7 @@ export async function getServerSideProps({ req, res }) {
   const locale = (acceptLang.split(',')[0] || 'en-US').trim();
 
   // Prefer Vercel country header in production (fast & accurate)
-  console.log("req.headers['x-vercel-ip-country']::", req.headers['x-vercel-ip-country'])
   const vercelCountry = (req.headers['x-vercel-ip-country'] || '').toString().toUpperCase();
-  console.log("vercelCountry::", vercelCountry)
   // Start with best guess from Vercel country, then Accept-Language fallback
   let currency =
     (vercelCountry && COUNTRY_TO_CURRENCY[vercelCountry]) ||
@@ -130,7 +128,6 @@ export async function getServerSideProps({ req, res }) {
 }
 
 export default function Pricing({ currency, rate, locale }) {
-  console.log("currency, rate, locale ::", currency, rate, locale )
   return (
     <>
       <Head><title>Pricing — getin10min</title></Head>
