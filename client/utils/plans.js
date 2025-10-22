@@ -167,7 +167,7 @@ export const PLANS = [
     subtitle: 'Graphics & Dynamic',
     title: 'Customized Website',
     priceUsd: 1299,
-    saleUsd: 910,
+    saleUsd: 900,
     highlight: true,
     features: [
       ['5-8 Pages', true],
