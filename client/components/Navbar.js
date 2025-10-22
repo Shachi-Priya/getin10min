@@ -118,7 +118,7 @@ function NavItem({ href, label, index }) {
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
-  const items = ['Home', 'Services', 'Portfolio', 'Pricing', 'Contact'];
+  const items = ['Home', 'Portfolio', 'Services', 'Pricing', 'Contact'];
 
   const nav = (
     <ul className="flex flex-col md:flex-row gap-6 items-start md:items-center">
