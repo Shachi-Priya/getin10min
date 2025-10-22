@@ -97,8 +97,8 @@ export const PLANS = [
     badge: 'One Time',
     subtitle: '',
     title: 'Static Website',
-    priceUsd: 199,
-    saleUsd: 140,
+    priceUsd: 219,
+    saleUsd: 150,
     highlight: false,
     features: [
       ['5 Pages', true],
