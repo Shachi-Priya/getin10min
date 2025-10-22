@@ -166,8 +166,8 @@ export const PLANS = [
     badge: 'One Time',
     subtitle: 'Graphics & Dynamic',
     title: 'Complete Package',
-    priceUsd: 1499,
-    saleUsd: 1199,
+    priceUsd: 799,
+    saleUsd: 520,
     highlight: true,
     features: [
       ['5 Pages', true],
