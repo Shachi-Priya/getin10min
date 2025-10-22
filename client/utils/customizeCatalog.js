@@ -10,7 +10,7 @@ export const CUSTOMIZE_CATALOG = {
       help: 'Informational pages (About, Services, FAQ, etc.)',
       min: 0, max: 50, step: 1,
       unitLabel: 'page',
-      unitPriceUsd: 20,
+      unitPriceUsd: 30,
       included: 0,
       group: 'Website'
     },
@@ -44,39 +44,19 @@ export const CUSTOMIZE_CATALOG = {
       included: 0,
       group: 'Website'
     },
-    {
-      key: 'contentPages',
-      label: 'Content Writing',
-      help: 'Copywriting / proofreading (per page)',
-      min: 0, max: 200, step: 1,
-      unitLabel: 'page',
-      unitPriceUsd: 15,
-      included: 0,
-      group: 'Branding & Graphics'
-    },
-    {
-      key: 'integrationsCount',
-      label: 'Integrations',
-      help: 'Forms, payments, CRM, chat widgets (per integration)',
-      min: 0, max: 20, step: 1,
-      unitLabel: 'integration',
-      unitPriceUsd: 50,
-      included: 0,
-      group: 'Integrations'
-    },
   ],
 
   // On/off items (now grouped to match Services)
   toggles: [
     // Branding & Graphics
-    { key: 'graphics',        label: 'Graphics Bundle',         help: 'Hero art, icons, image treatment',             priceUsd: 160, default: false, group: 'Branding & Graphics' },
-    { key: 'logoDesign',      label: 'Logo Design',             help: 'Primary logo + lockups (basic)',               priceUsd: 120, default: false, group: 'Branding & Graphics' },
-    { key: 'brandColors',     label: 'Brand Colors & Styles',   help: 'Palette, typography, usage quick-guide',       priceUsd: 60,  default: false, group: 'Branding & Graphics' },
+    { key: 'graphics',        label: 'Graphics Bundle',         help: 'Hero art, icons, image treatment',             priceUsd: 120, default: false, group: 'Branding & Graphics' },
+    { key: 'logoDesign',      label: 'Logo Design',             help: 'Primary logo + lockups (basic)',               priceUsd: 50, default: false, group: 'Branding & Graphics' },
+    { key: 'brandColors',     label: 'Brand Colors & Styles',   help: 'Palette, typography, usage quick-guide',       priceUsd: 40,  default: false, group: 'Branding & Graphics' },
     { key: 'socialCards',     label: 'Social Cards Pack',       help: 'Share images, cover images, templates',        priceUsd: 80,  default: false, group: 'Branding & Graphics' },
 
     // SEO & Performance
-    { key: 'seoFull',         label: 'Full SEO Setup',          help: 'Meta, sitemap, robots, schema, index hygiene', priceUsd: 220, default: false, group: 'SEO & Performance' },
-    { key: 'lighthouse',      label: 'Performance Pass',        help: 'Core Web Vitals & Lighthouse improvements',    priceUsd: 120, default: false, group: 'SEO & Performance' },
+    { key: 'seoFull',         label: 'Full SEO Setup',          help: 'Meta, sitemap, robots, schema, index hygiene', priceUsd: 130, default: false, group: 'SEO & Performance' },
+    { key: 'lighthouse',      label: 'Performance Pass',        help: 'Core Web Vitals & Lighthouse improvements',    priceUsd: 110, default: false, group: 'SEO & Performance' },
     { key: 'analyticsSetup',  label: 'Analytics Setup',         help: 'GA4 / Plausible + events & funnels',           priceUsd: 50,  default: false, group: 'SEO & Performance' },
 
     // Integrations
