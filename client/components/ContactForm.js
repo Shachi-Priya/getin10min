@@ -1,111 +1,19 @@
-// import { useState, useEffect, useRef } from 'react';
-// import { useRouter } from 'next/router';
-// import emailjs from '@emailjs/browser';
-
-// export default function ContactForm() {
-//   const router = useRouter();
-//   const [status, setStatus] = useState('idle');
-//   const [plan, setPlan] = useState('static');
-//   const formRef = useRef();
-
-//   useEffect(() => {
-//     if (router.query.plan) setPlan(router.query.plan);
-//   }, [router.query.plan]);
-
-//   async function onSubmit(e) {
-//     e.preventDefault();
-//     setStatus('loading');
-
-//     try {
-//       const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
-//       const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
-//       const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
-
-//       if (!serviceId || !templateId || !publicKey) {
-//         throw new Error('Missing EmailJS env vars');
-//       }
-
-//       const result = await emailjs.send(
-//         serviceId,
-//         templateId,
-//         {
-//           plan,
-//           user_name: e.target.name.value,
-//           user_email: e.target.email.value,
-//           user_phone: e.target.phone.value || '-',
-//           message: e.target.message.value || '-'
-//         },
-//         { publicKey }
-//       );
-
-//       if (result.status !== 200) throw new Error('EmailJS failed');
-//       setStatus('success');
-//       e.target.reset();
-//     } catch (err) {
-//       console.error(err);
-//       setStatus('error');
-//     }
-//   }
-
-//   return (
-//     <form ref={formRef} onSubmit={onSubmit} className="card p-6 space-y-4">
-//       <div className="grid md:grid-cols-2 gap-4">
-//         <div>
-//           <label className="block text-sm mb-1">Full name</label>
-//           <input name="name" required className="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-3" placeholder="Your name" />
-//         </div>
-//         <div>
-//           <label className="block text-sm mb-1">Email</label>
-//           <input type="email" name="email" required className="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-3" placeholder="you@company.com" />
-//         </div>
-//         <div>
-//           <label className="block text-sm mb-1">Phone</label>
-//           <input name="phone" className="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-3" placeholder="+91 9xxxxxxxxx" />
-//         </div>
-//         <div>
-//           <label className="block text-sm mb-1">Plan</label>
-//           <select value={plan} onChange={(e)=>setPlan(e.target.value)} className="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-3">
-//             <option value="static">Static Website</option>
-//             <option value="dynamic">Dynamic Website</option>
-//             <option value="dynamic-seo">Dynamic with SEO</option>
-//             <option value="complete">Complete Package</option>
-//           </select>
-//         </div>
-//       </div>
-//       <div>
-//         <label className="block text-sm mb-1">Tell us about your project</label>
-//         <textarea name="message" rows="5" className="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-3" placeholder="What do you need? Any references?" />
-//       </div>
-//       <button className="btn btn-primary" disabled={status==='loading'}>
-//         {status==='loading' ? 'Sending...' : 'Send request'}
-//       </button>
-//       <p className="text-xs text-slate-400">Powered by EmailJS</p>
-//       {status==='success' && <p className="text-emerald-400 text-sm">Thanks! We’ll contact you shortly via email.</p>}
-//       {status==='error' && <p className="text-rose-400 text-sm">Oops, something went wrong. Please try again.</p>}
-//     </form>
-//   );
-// }
-
-
-////////////
-
-
-
-
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import emailjs from '@emailjs/browser';
 import CUSTOMIZE_CATALOG from '@/utils/customizeCatalog'; // to map labels
 
 // Helpers
-function parseBool(v) { return v === '1' || v === 'true' || v === true; }
+function parseBool(v) {
+  return v === '1' || v === 'true' || v === true;
+}
 function safeInt(v, def = 0) {
   const n = Number(v);
   return Number.isFinite(n) ? n : def;
 }
 function formatMoney(intAmount, currency = 'USD', locale = 'en-US') {
   const fmtCurrency = currency || 'USD';
-  const fmtLocale = fmtCurrency === 'USD' ? 'en-US' : (locale || 'en-US');
+  const fmtLocale = fmtCurrency === 'USD' ? 'en-US' : locale || 'en-US';
   const str = new Intl.NumberFormat(fmtLocale, {
     style: 'currency',
     currency: fmtCurrency,
@@ -127,8 +35,8 @@ export default function ContactForm() {
   // Pre-fill plan or custom config
   useEffect(() => {
     if (!router.isReady) return;
-    if (typeof q.plan === 'string') setPlan(q.plan);            // /contact?plan=seo
-    if (q.type === 'custom') setLockPlan(true);                 // /contact?type=custom&...
+    if (typeof q.plan === 'string') setPlan(q.plan); // /contact?plan=seo
+    if (q.type === 'custom') setLockPlan(true); // /contact?type=custom&...
   }, [router.isReady, q.plan, q.type]);
 
   // Build a human-readable summary if coming from the customizer
@@ -140,23 +48,24 @@ export default function ContactForm() {
 
     // Counters
     const counters = {};
-    CUSTOMIZE_CATALOG.counters.forEach(c => {
+    CUSTOMIZE_CATALOG.counters.forEach((c) => {
       counters[c.key] = safeInt(q[c.key], c.included || 0);
     });
 
     // Toggles
     const toggles = {};
-    CUSTOMIZE_CATALOG.toggles.forEach(t => {
+    CUSTOMIZE_CATALOG.toggles.forEach((t) => {
       toggles[t.key] = parseBool(q[t.key]);
     });
 
     // Pretty lines for UI + email
     const lines = [];
-    CUSTOMIZE_CATALOG.counters.forEach(c => {
+    CUSTOMIZE_CATALOG.counters.forEach((c) => {
       const v = counters[c.key];
-      if (v > 0) lines.push(`${c.label}: ${v} ${c.unitLabel}${v === 1 ? '' : 's'}`);
+      if (v > 0)
+        lines.push(`${c.label}: ${v} ${c.unitLabel}${v === 1 ? '' : 's'}`);
     });
-    CUSTOMIZE_CATALOG.toggles.forEach(t => {
+    CUSTOMIZE_CATALOG.toggles.forEach((t) => {
       if (toggles[t.key]) lines.push(`${t.label}`);
     });
 
@@ -184,14 +93,16 @@ export default function ContactForm() {
 
       const form = new FormData(e.currentTarget);
       const payload = {
-        plan,                                            // plan key (or 'custom' implied by config_json)
+        plan, // plan key (or 'custom' implied by config_json)
         type: q.type === 'custom' ? 'custom' : 'plan',
         user_name: form.get('name'),
         user_email: form.get('email'),
         user_phone: form.get('phone') || '-',
         message: form.get('message') || '-',
         // Optional extras for your template:
-        estimate_local: customSummary ? String(customSummary.estimateLocal) : '',
+        estimate_local: customSummary
+          ? String(customSummary.estimateLocal)
+          : '',
         estimate_currency: customSummary ? customSummary.currency : '',
         human_summary: customSummary ? customSummary.lines.join(', ') : '',
         config_json: customSummary
@@ -206,7 +117,9 @@ export default function ContactForm() {
           : '',
       };
 
-      const result = await emailjs.send(serviceId, templateId, payload, { publicKey });
+      const result = await emailjs.send(serviceId, templateId, payload, {
+        publicKey,
+      });
       if (result.status !== 200) throw new Error('EmailJS failed');
 
       setStatus('success');
@@ -227,7 +140,10 @@ export default function ContactForm() {
             <span className="text-sm text-slate-400">
               Est. total:&nbsp;
               <span className="font-semibold text-cyan-300">
-                {formatMoney(customSummary.estimateLocal, customSummary.currency)}
+                {formatMoney(
+                  customSummary.estimateLocal,
+                  customSummary.currency
+                )}
               </span>
             </span>
           </div>
@@ -239,7 +155,10 @@ export default function ContactForm() {
             )}
           </ul>
           <div className="mt-3 text-sm">
-            <a href="/pricing#customizer" className="text-cyan-300 hover:underline">
+            <a
+              href="/pricing#customizer"
+              className="text-cyan-300 hover:underline"
+            >
               Edit configuration
             </a>
           </div>
@@ -280,7 +199,7 @@ export default function ContactForm() {
           <label className="block text-sm mb-1">Plan</label>
           <select
             value={plan}
-            onChange={(e)=>setPlan(e.target.value)}
+            onChange={(e) => setPlan(e.target.value)}
             disabled={!!customSummary || lockPlan}
             className="w-full rounded-lg bg-slate-800 border border-slate-700 px-4 py-3 disabled:opacity-60"
           >
@@ -307,13 +226,21 @@ export default function ContactForm() {
         />
       </div>
 
-      <button className="btn btn-primary" disabled={status==='loading'}>
-        {status==='loading' ? 'Sending...' : 'Send request'}
+      <button className="btn btn-primary" disabled={status === 'loading'}>
+        {status === 'loading' ? 'Sending...' : 'Send request'}
       </button>
 
       <p className="text-xs text-slate-400">Powered by EmailJS</p>
-      {status==='success' && <p className="text-emerald-400 text-sm">Thanks! We’ll contact you shortly via email.</p>}
-      {status==='error' && <p className="text-rose-400 text-sm">Oops, something went wrong. Please try again.</p>}
+      {status === 'success' && (
+        <p className="text-emerald-400 text-sm">
+          Thanks! We’ll contact you shortly via email.
+        </p>
+      )}
+      {status === 'error' && (
+        <p className="text-rose-400 text-sm">
+          Oops, something went wrong. Please try again.
+        </p>
+      )}
     </form>
   );
 }

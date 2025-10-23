@@ -1,10 +1,11 @@
+// pages/portfolio.js
 import Head from 'next/head';
 import Image from 'next/image';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
-// Add Google Font
+// Google Font
 const fontLink =
   'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
 
@@ -77,22 +78,96 @@ const PROJECTS = [
   },
 ];
 
-function useAutoSlide(length, delay = 2800) {
-  const [idx, setIdx] = useState(0);
+// 🌀 Randomized auto-slider hook
+function useJitteryAutoSlider(
+  len,
+  { base = 2600, jitter = 1600, reverseChance = 0.28, enabled = true } = {}
+) {
+  const [index, setIndex] = useState(0);
+  const [dir, setDir] = useState(1);
+  const pausedRef = useRef(false);
+  const timerRef = useRef(null);
+
+  const clear = () => timerRef.current && clearTimeout(timerRef.current);
+
+  const schedule = () => {
+    if (!enabled || len <= 1 || pausedRef.current) return;
+    const plusMinus = Math.random() > 0.5 ? 1 : -1;
+    const nextDelay = Math.max(800, base + Math.random() * jitter * plusMinus);
+    timerRef.current = setTimeout(() => {
+      const goBack = Math.random() < reverseChance;
+      setDir(goBack ? -1 : 1);
+      setIndex((i) => (goBack ? (i - 1 + len) % len : (i + 1) % len));
+      schedule();
+    }, nextDelay);
+  };
+
   useEffect(() => {
-    if (length <= 1) return;
-    const t = setInterval(() => setIdx((i) => (i + 1) % length), delay);
-    return () => clearInterval(t);
-  }, [length, delay]);
-  return [idx, setIdx];
+    clear();
+    schedule();
+    return clear;
+  }, [len, enabled]);
+
+  const pause = () => {
+    pausedRef.current = true;
+    clear();
+  };
+  const resume = () => {
+    pausedRef.current = false;
+    clear();
+    schedule();
+  };
+
+  const goTo = (next) => {
+    setDir(next > index ? 1 : -1);
+    setIndex(((next % len) + len) % len);
+    clear();
+    schedule();
+  };
+
+  return { index, dir, goTo, pause, resume };
 }
 
+// 🎞 Each project card with smooth slide animation
 function ProjectCard({ p, expanded, onExpand }) {
-  const [slide, setSlide] = useAutoSlide(p.images.length);
+  const {
+    index: slide,
+    dir,
+    goTo,
+    pause,
+    resume,
+  } = useJitteryAutoSlider(p.images.length, {
+    base: 2600,
+    jitter: 1600,
+    reverseChance: 0.28,
+    enabled: true,
+  });
+
   const current = useMemo(
     () => p.images[slide] ?? p.images[0],
     [p.images, slide]
   );
+
+  const variants = {
+    enter: (direction) => ({
+      x: direction > 0 ? '100%' : '-100%',
+      opacity: 1,
+      position: 'absolute',
+      inset: 0,
+    }),
+    center: {
+      x: '0%',
+      opacity: 1,
+      position: 'absolute',
+      inset: 0,
+    },
+    exit: (direction) => ({
+      x: direction > 0 ? '-100%' : '100%',
+      opacity: 1,
+      position: 'absolute',
+      inset: 0,
+    }),
+  };
 
   return (
     <motion.div
@@ -101,15 +176,22 @@ function ProjectCard({ p, expanded, onExpand }) {
       whileHover={{ y: -3, scale: 1.01 }}
       transition={{ type: 'tween', duration: 0.25 }}
     >
-      <div className="relative h-40 md:h-44 lg:h-48">
-        <AnimatePresence initial={false} mode="wait">
+      {/* Slider */}
+      <div
+        className="relative h-40 md:h-44 lg:h-48 overflow-hidden"
+        onMouseEnter={pause}
+        onMouseLeave={resume}
+      >
+        <AnimatePresence initial={false} custom={dir} mode="wait">
           <motion.div
             key={current}
+            custom={dir}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.45, ease: 'easeInOut' }}
             className="absolute inset-0"
-            initial={{ opacity: 0.0, scale: 1.02 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 1.01 }}
-            transition={{ duration: 0.35, ease: 'easeOut' }}
           >
             <Image
               src={current}
@@ -117,25 +199,27 @@ function ProjectCard({ p, expanded, onExpand }) {
               fill
               sizes="(min-width:1024px) 33vw, (min-width:640px) 50vw, 100vw"
               style={{ objectFit: 'cover' }}
-              priority={false}
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/10 to-black/60" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60" />
           </motion.div>
         </AnimatePresence>
 
+        {/* Dots */}
         <div className="absolute bottom-2 right-3 flex gap-1.5">
           {p.images.map((_, i) => (
             <button
               key={i}
-              onClick={() => setSlide(i)}
+              onClick={() => goTo(i)}
               className={`h-1.5 rounded-full transition ${
                 i === slide ? 'w-4 bg-cyan-300' : 'w-2 bg-white/40'
               }`}
+              aria-label={`Slide ${i + 1} of ${p.images.length}`}
             />
           ))}
         </div>
       </div>
 
+      {/* Body */}
       <div className="p-5">
         <div className="flex items-center justify-between gap-3">
           <h3 className="font-semibold tracking-tight">{p.title}</h3>
@@ -143,9 +227,7 @@ function ProjectCard({ p, expanded, onExpand }) {
             Visit →
           </Link>
         </div>
-
         <p className="text-slate-300 text-sm mt-1 line-clamp-2">{p.desc}</p>
-
         <div className="mt-4 flex items-center justify-between">
           <button className="btn btn-ghost text-sm" onClick={onExpand}>
             View details
@@ -153,6 +235,7 @@ function ProjectCard({ p, expanded, onExpand }) {
         </div>
       </div>
 
+      {/* Expanded Details */}
       <AnimatePresence>
         {expanded && (
           <motion.div
@@ -179,6 +262,7 @@ function ProjectCard({ p, expanded, onExpand }) {
   );
 }
 
+// 📂 Portfolio Page
 export default function Portfolio() {
   const [openIndex, setOpenIndex] = useState(null);
 
@@ -189,13 +273,11 @@ export default function Portfolio() {
         <link rel="stylesheet" href={fontLink} />
       </Head>
 
-      {/* full-page gradient background */}
       <div
         className="min-h-screen w-full"
         style={{
-          background: `
-            linear-gradient(160deg, #0f172a 0%, #1e293b 35%, #0b1220 70%, #020617 100%)
-          `,
+          background:
+            'linear-gradient(160deg, #0f172a 0%, #1e293b 35%, #0b1220 70%, #020617 100%)',
           fontFamily: "'Inter', sans-serif",
         }}
       >
