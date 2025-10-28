@@ -87,14 +87,24 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 backdrop-blur bg-slate-950/60 border-b border-slate-800">
       <div className="container-tight flex items-center justify-between py-3">
         <Link href="/" className="flex items-center gap-3">
-          <Image
+          {/* <Image
             alt="getin10min"
             src="/minlogo2.png"
             width={112} // smaller logo
             height={26}
             priority
             className="opacity-95 hover:opacity-100 transition"
+          /> */}
+          <Image
+            src="/minlogo2.png"
+            alt="getin10min"
+            width={120}
+            height={32}
+            style={{ height: 'auto' }}
+            priority
+            className="opacity-95 hover:opacity-100 transition"
           />
+
           <span className="sr-only">getin10min</span>
         </Link>
 
