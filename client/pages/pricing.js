@@ -119,7 +119,7 @@ export default function Pricing({ currency, rate, locale, priceMap }) {
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold">Pricing</h1>
           <p className="text-slate-300 mt-2">
-            Transparent plans inspired by modern agencies. Pick one, or customize and request a tailored quote.
+            Every business is unique. Transparent, flexible plans built for every stage of your business. Pick what fits — or tailor your own.
           </p>
         </div>
         <PricingCards
