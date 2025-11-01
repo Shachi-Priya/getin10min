@@ -31,7 +31,7 @@ export default function ContactForm() {
 
   // States
   const [status, setStatus] = useState('idle');
-  const [plan, setPlan] = useState('static');
+  const [plan, setPlan] = useState('others');
   const [lockPlan, setLockPlan] = useState(false);
   const [phone, setPhone] = useState('');
 
@@ -229,6 +229,7 @@ export default function ContactForm() {
               <option value="dynamic">Dynamic Website</option>
               <option value="seo">Dynamic with SEO</option>
               <option value="complete">Customized Website</option>
+              <option value="others">Others</option>
             </select>
             {(customSummary || lockPlan) && (
               <p className="text-xs text-slate-500 mt-1">
